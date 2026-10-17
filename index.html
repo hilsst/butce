@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bütçe</title>
+  <meta name="theme-color" content="#0f6b5c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><img src="icon.svg" alt=""><span>Bütçe</span></div>
+    <div class="month-nav">
+      <button id="prevMonth" class="icon-btn" aria-label="Önceki ay">‹</button>
+      <select id="monthSelect" aria-label="Ay"></select>
+      <button id="nextMonth" class="icon-btn" aria-label="Sonraki ay">›</button>
+    </div>
+    <button id="menuBtn" class="icon-btn" aria-label="Menü">⋯<span id="syncDot" class="sync-dot hidden"></span></button>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="ozet" class="active">Özet</button>
+    <button data-tab="harcamalar">Harcamalar</button>
+    <button data-tab="kartlar">Kartlar</button>
+    <button data-tab="sabit">Sabit giderler</button>
+    <button data-tab="haftalik">Haftalık</button>
+    <button data-tab="kisisel">Kişisel</button>
+    <button data-tab="gelir">Gelirler</button>
+    <button data-tab="banka">Banka</button>
+  </nav>
+
+  <main id="view"></main>
+
+  <div id="menu" class="sheet hidden">
+    <div class="sheet-card">
+      <h3>Menü</h3>
+      <div id="syncBox" class="sync-box"></div>
+      <button id="newMonthBtn" class="btn">Yeni ay oluştur</button>
+      <button id="exportBtn" class="btn ghost">Yedeği indir (JSON)</button>
+      <label class="btn ghost file">Yedekten geri yükle<input id="importBackup" type="file" accept="application/json" hidden></label>
+      <button id="installBtn" class="btn ghost hidden">Uygulama olarak yükle</button>
+      <button id="closeMenu" class="btn ghost">Kapat</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="seed.js"></script>
+  <script src="xlsx.full.min.js" defer></script>
+  <script src="ocr/tesseract.min.js" defer></script>
+  <script src="kart.js"></script>
+  <script src="fis.js"></script>
+  <script src="app.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="sync.js"></script>
+</body>
+</html>
