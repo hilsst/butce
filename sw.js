@@ -1,4 +1,4 @@
-const CACHE = "butce-v5";
+const CACHE = "butce-v6";
 const FILES = ["./", "index.html", "style.css", "app.js", "sync.js", "firebase-config.js", "kart.js", "fis.js", "ocr/tesseract.min.js", "seed.js", "xlsx.full.min.js", "manifest.webmanifest", "icon.svg"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(
