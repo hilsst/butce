@@ -227,6 +227,25 @@ function fisPaneli() {
     </div></div>`;
 }
 
+// Kayıt satırı; kartla ödenenlerde kart, taksit sayısı ve taksit tutarı da gösterilir.
+function kayitSatiri(h) {
+  let chip = "", tutar = `<div class="amt-main">${money(h.tutar)}</div>`;
+  if (h.odeme !== "nakit") {
+    const islem = state.kart_islemleri.find(k => k.fis_id === h.id);
+    const n = islem?.taksit || 1;
+    chip = `<span class="chip">${esc(kartBul(h.odeme)?.ad || "Kart")} · ${n > 1 ? n + " taksit" : "Peşin"}</span>`;
+    if (islem && n > 1) {
+      const tk = taksitler(islem), sira = tk.filter(t => t.ay <= bugunAyi()).length;
+      tutar = `<div class="amt-main">${n} × ${money(tk[0].tutar)}</div>
+        <div class="meta">Toplam ${money(h.tutar)} · ${sira ? `${sira}/${n} taksit` : `ilk taksit ${kisaAy(tk[0].ay)}`}</div>`;
+    }
+  }
+  return `<div class="row"><div>
+    <div class="name">${esc(h.magaza)}${h.fatura ? `<span class="chip">Fatura</span>` : ""}${chip}</div>
+    <div class="meta">${new Date(h.tarih).toLocaleDateString("tr-TR")} · ${esc(h.kategori)} · ${h.kaynak}</div></div>
+    <div class="amt amt-row"><div>${tutar}</div><button class="del" data-harcama-sil="${h.id}" aria-label="Sil">×</button></div></div>`;
+}
+
 function viewHarcamalar() {
   const liste = state.harcamalar.filter(h => h.ay === current).sort((a, b) => b.tarih.localeCompare(a.tarih));
   const toplam = liste.reduce((a, h) => a + h.tutar, 0);
@@ -242,10 +261,7 @@ function viewHarcamalar() {
     <div class="grid" style="margin-top:16px">${stat(`${monthLabel(current)} harcamaları`, money(toplam), "", `${liste.length} kayıt`)}
       ${Object.entries(kategoriler).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => stat(esc(k), money(v))).join("")}</div>
     <h2>Kayıtlar</h2>
-    <div class="card list">${liste.length ? liste.map(h => `<div class="row"><div>
-        <div class="name">${esc(h.magaza)}${h.fatura ? `<span class="chip">Fatura</span>` : ""}${h.odeme !== "nakit" ? `<span class="chip">${esc(kartBul(h.odeme)?.ad || "Kart")}</span>` : ""}</div>
-        <div class="meta">${new Date(h.tarih).toLocaleDateString("tr-TR")} · ${esc(h.kategori)} · ${h.kaynak}</div></div>
-        <div class="amt">${money(h.tutar)} <button class="del" data-harcama-sil="${h.id}" aria-label="Sil">×</button></div></div>`).join("")
+    <div class="card list">${liste.length ? liste.map(kayitSatiri).join("")
       : `<div class="row"><div class="muted">Bu ay için kayıt yok. Fiş tarayarak başlayabilirsin.</div></div>`}</div>
     <p class="note">Nakit ve banka kartı harcamaları seçtiğin bütçe kalemine eklenir. Kredi kartı harcamaları Kartlar'a işlenir ve bütçeye kart ödemesiyle yansır.</p>`;
 }
