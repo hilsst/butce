@@ -132,7 +132,7 @@ function viewOzet() {
   return `
     <div class="grid">
       ${stat("Gelir", money(s.gelir))}
-      ${stat("Planlanan harcama", money(s.planHarcanan), "", `Plan kalan: <span class="${signCls(s.planKalan)}">${money(s.planKalan)}</span>`)}
+      ${stat("Planlanan harcama", money(s.planHarcanan), "", `<div class="plan-kalan">Plan kalan <b class="${signCls(s.planKalan)}">${money(s.planKalan)}</b></div>`)}
       ${stat("Gerçekleşen harcama", money(s.reelHarcanan), "", `Planın %${pct(s.reelHarcanan, s.planHarcanan)}'i`)}
       ${stat("Olması gereken (mevcut)", money(s.mevcut), signCls(s.mevcut))}
       ${stat("Banka bakiyesi", money(s.banka), "", s.banka == null ? `<a href="#" data-goto="banka">Bakiye gir</a>` : "Garanti BBVA")}

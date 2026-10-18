@@ -216,3 +216,10 @@ select.choice { padding-right: 8px; }
 .sync-dot.off { background: var(--warn); }
 .sync-box { background: var(--surface-2); border-radius: 12px; padding: 12px; margin-bottom: 4px; display: flex; flex-direction: column; gap: 8px; }
 .sync-box .name { font-weight: 600; }
+
+.group-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); padding: 12px 0 6px; border-bottom: 1px solid var(--border); }
+.group-head:first-child { padding-top: 0; }
+.amt-row { display: flex; align-items: center; gap: 8px; }
+.amt-main { font-weight: 700; }
+.plan-kalan { margin-top: 6px; font-size: 14px; color: var(--muted); }
+.plan-kalan b { display: block; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }

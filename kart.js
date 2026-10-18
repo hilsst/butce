@@ -123,16 +123,30 @@ function viewKartlar() {
 
     <h2>Kart harcamaları</h2>
     <div class="card list">
-      ${islemler.length ? islemler.map(i => {
-        const tk = taksitler(i), kalan = tk.filter(t => t.ay >= ay);
-        const k = kartBul(i.kart_id);
-        const sira = tk.filter(t => t.ay <= ay).length;
-        const etiket = i.taksit > 1 ? (sira ? `${sira}/${i.taksit} taksit` : `ilk taksit ${kisaAy(tk[0].ay)}`) : "";
-        return `<div class="row"><div><div class="name">${esc(i.aciklama)}${etiket ? `<span class="chip">${etiket}</span>` : ""}</div>
-          <div class="meta">${esc(k?.ad || "?")} · ${new Date(i.tarih).toLocaleDateString("tr-TR")}${i.kategori ? " · " + esc(i.kategori) : ""}${kalan.length && i.taksit > 1 ? ` · kalan ${money(kalan.reduce((a, t) => a + t.tutar, 0))}` : ""}</div></div>
-          <div class="amt">${money(i.tutar)} <button class="del" data-kart-sil="${i.id}" aria-label="Sil">×</button></div></div>`;
-      }).join("") : `<div class="row"><div class="muted">Henüz kart harcaması yok. Yukarıdan ekleyebilir ya da Harcamalar'dan fiş tarayabilirsin.</div></div>`}
+      ${islemler.length ? kartGrubu("Taksitli", islemler.filter(i => i.taksit > 1), ay) + kartGrubu("Tek çekim", islemler.filter(i => !(i.taksit > 1)), ay)
+        : `<div class="row"><div class="muted">Henüz kart harcaması yok. Yukarıdan ekleyebilir ya da Harcamalar'dan fiş tarayabilirsin.</div></div>`}
     </div>`;
+}
+
+// Kart harcamaları listesinde bir grup (taksitli / tek çekim); liste zaten en yeniden eskiye sıralı gelir.
+function kartGrubu(baslik, liste, ay) {
+  if (!liste.length) return "";
+  const taksitli = baslik === "Taksitli";
+  const ozet = taksitli
+    ? `Aylık toplam ${money(liste.filter(i => taksitler(i).some(t => t.ay >= ay)).reduce((a, i) => a + i.tutar / i.taksit, 0))}`
+    : `Toplam ${money(liste.reduce((a, i) => a + i.tutar, 0))}`;
+  return `<div class="group-head"><b>${baslik.toLocaleUpperCase("tr-TR")} (${liste.length})</b><span>${ozet}</span></div>` + liste.map(i => {
+    const tk = taksitler(i), kalan = tk.filter(t => t.ay >= ay);
+    const k = kartBul(i.kart_id);
+    const sira = tk.filter(t => t.ay <= ay).length;
+    const etiket = taksitli ? (sira ? `${sira}/${i.taksit} taksit` : `ilk taksit ${kisaAy(tk[0].ay)}`) : "";
+    const tutar = taksitli
+      ? `<div class="amt-main">${i.taksit} × ${money(tk[0].tutar)}</div><div class="meta">Toplam ${money(i.tutar)} · kalan ${money(kalan.reduce((a, t) => a + t.tutar, 0))}</div>`
+      : `<div class="amt-main">${money(i.tutar)}</div>`;
+    return `<div class="row"><div><div class="name">${esc(i.aciklama)}${etiket ? `<span class="chip">${etiket}</span>` : ""}</div>
+      <div class="meta">${esc(k?.ad || "?")} · ${new Date(i.tarih).toLocaleDateString("tr-TR")}${i.kategori ? " · " + esc(i.kategori) : ""}</div></div>
+      <div class="amt amt-row"><div>${tutar}</div><button class="del" data-kart-sil="${i.id}" aria-label="Sil">×</button></div></div>`;
+  }).join("");
 }
 
 function kartIslemiEkle(v) {
