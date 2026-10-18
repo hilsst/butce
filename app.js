@@ -1,6 +1,7 @@
 "use strict";
 
 const STORE_KEY = "butce.v1";
+const APP_SURUM = "9"; // version.json ile aynı tutulur
 const AY_ADLARI = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 const KATEGORILER = {
   kredi_karti: "Kredi kartı", fatura: "Fatura", ev: "Ev", araba: "Araba",
@@ -478,6 +479,28 @@ document.getElementById("installBtn").onclick = () => installPrompt?.prompt();
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+
+// Yeni sürüm kontrolü: açılışta, uygulamaya dönüldüğünde ve 5 dakikada bir.
+let surumErtelendi = false;
+async function surumKontrol() {
+  if (surumErtelendi || location.protocol === "file:") return;
+  try {
+    const r = await fetch("version.json", { cache: "no-store" });
+    const { surum } = await r.json();
+    if (surum && surum !== APP_SURUM) document.getElementById("updateBar").classList.remove("hidden");
+  } catch (e) { /* internetsizken sessizce geç */ }
+}
+document.getElementById("updateNow").onclick = async () => {
+  try { await (await navigator.serviceWorker?.getRegistration())?.update(); } catch (e) {}
+  location.reload();
+};
+document.getElementById("updateLater").onclick = () => {
+  surumErtelendi = true;
+  document.getElementById("updateBar").classList.add("hidden");
+};
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") surumKontrol(); });
+setInterval(surumKontrol, 5 * 60 * 1000);
+surumKontrol();
 
 document.getElementById("view").addEventListener("change", async e => {
   if (!("ilkYukle" in e.target.dataset) || !e.target.files[0]) return;

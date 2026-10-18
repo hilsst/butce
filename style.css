@@ -223,3 +223,9 @@ select.choice { padding-right: 8px; }
 .amt-main { font-weight: 700; }
 .plan-kalan { margin-top: 6px; font-size: 14px; color: var(--muted); }
 .plan-kalan b { display: block; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.update-bar {
+  position: sticky; top: 57px; z-index: 4; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 16px; background: var(--accent-soft); color: var(--accent); border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600;
+}
+.update-bar .ghost { color: var(--accent); border-color: transparent; }
